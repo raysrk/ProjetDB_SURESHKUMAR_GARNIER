@@ -51,6 +51,40 @@ Ce dictionnaire contient 30 données brutes.
 | `score_eq2` | Match | Points équipe 2 | Entier | Min 0 |
 | `duree_match` | Match | Durée en minutes | Entier | Min 1 |
 | `id_log` | Historique| Identifiant de connexion | Entier | Clé primaire |
+
+# MLD 
+
+**JOUEUR** (<u>id_joueur</u>, pseudo_joueur, email_joueur, date_inscription, #id_parrain)
+- id_parrain est une FK auto-référentielle vers JOUEUR(id_joueur)
+
+**HISTORIQUE_CONNEXION** (<u>id_log, #id_joueur</u>, adresse_ip, date_connexion, os_client)
+- Entité faible : clé primaire composite (id_log, id_joueur)
+
+**JEU** (<u>id_jeu</u>, titre_jeu, editeur_jeu, genre_jeu)
+
+**EDITION** (<u>id_edition</u>, nom_edition, prix_edition, #id_jeu)
+
+**EQUIPE** (<u>id_equipe</u>, nom_equipe, date_creation_eq, #id_capitaine)
+- id_capitaine est une FK vers JOUEUR(id_joueur)
+
+**APPARTENIR** (<u>#id_joueur, #id_equipe</u>, date_entree)
+- Table d'association N:N entre JOUEUR et EQUIPE
+
+**TOURNOI** (<u>id_tournoi</u>, nom_tournoi, date_debut_tr, date_fin_tr, cashprize_total, nb_max_equipes, statut_tournoi, type_tournoi, lieu_tournoi, #id_jeu)
+- type_tournoi : 'Ouvert' ou 'Sur invitation'
+- lieu_tournoi : nom du lieu ou 'Online'
+
+**RECOMPENSE** (<u>#id_tournoi, classement</u>, montant)
+- classement ∈ {1, 2, 3}
+
+**PARTICIPER** (<u>#id_equipe, #id_tournoi</u>)
+- Table d'association N:N entre EQUIPE et TOURNOI
+- Garantit qu'une équipe ne représente qu'un seul slot par tournoi
+
+**MATCH** (<u>id_match</u>, score_eq1, score_eq2, duree_match, #id_tournoi, #id_equipe1, #id_equipe2)
+
+**STATISTIQUE_JOUEUR** (<u>#id_joueur, #id_match</u>, kills, deaths, assists, score_individuel)
 | `adresse_ip` | Historique| IP de l'utilisateur | Texte | Format IP |
 | `date_connexion` | Historique| Horodatage précis | Date/Heure | Non nul |
 | `os_client` | Historique| Système d'exploitation (Windows, Mac)| Texte | - |
+
